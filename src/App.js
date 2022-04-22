@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 import Box from "./component/Box";
 
@@ -11,33 +12,75 @@ import Box from "./component/Box";
 const choice = {
   rock: {
     name: "Rock",
-    img: "https://cdn-icons.flaticon.com/png/512/2041/premium/2041965.png?token=exp=1650509360~hmac=9e4e477cb66a2d86fb75c21dd5777eeb",
+    img: "https://cdn-icons.flaticon.com/png/512/2041/premium/2041965.png?token=exp=1650592901~hmac=aee820b23cce1a091feab04145df7358",
   },
   paper: {
     name: "Paper",
-    img: "https://cdn-icons-png.flaticon.com/512/889/889648.png",
+    img: "https://cdn-icons.flaticon.com/png/512/737/premium/737804.png?token=exp=1650592995~hmac=ed3d28ce6055d6598785a3495daaba64",
   },
   scissors: {
     name: "Scissors",
-    img: "https://cdn-icons.flaticon.com/png/512/737/premium/737812.png?token=exp=1650510086~hmac=15385f319f86323c3ab6bc449bb32b39",
+    img: "https://cdn-icons.flaticon.com/png/512/737/premium/737812.png?token=exp=1650592976~hmac=37da059d513e14144d7d9ca3fe5a147a",
   },
 };
 
 function App() {
+  const [userSelect, setUserSelect] = useState(null);
+  const [computerSelect, setComputerSelect] = useState(null);
+  const [userResult, setUserResult] = useState("");
+  const [computerResult, setComputerResult] = useState("");
+
   const play = (userChoice) => {
-    console.log("Click", userChoice);
+    setUserSelect(choice[userChoice]);
+    let computerChoice = randomChoice();
+    setComputerSelect(computerChoice);
+
+    setUserResult(userResultFn(choice[userChoice], computerChoice));
+    setComputerResult(computerResultFn(choice[userChoice], computerChoice));
+  };
+
+  const userResultFn = (user, computer) => {
+    if (user.name == computer.name) {
+      return "Tie";
+    } else if (user.name == "Rock") {
+      return computer.name == "Scissors" ? "Win" : "Lose";
+    } else if (user.name == "Scissors") {
+      return computer.name == "Paper" ? "Win" : "Lose";
+    } else if (user.name == "Paper") {
+      return computer.name == "Rock" ? "Win" : "Lose";
+    }
+  };
+
+  const computerResultFn = (user, computer) => {
+    if (user.name == computer.name) {
+      return "Tie";
+    } else if (user.name == "Rock") {
+      return computer.name == "Scissors" ? "Lose" : "Win";
+    } else if (user.name == "Scissors") {
+      return computer.name == "Paper" ? "Lose" : "Win";
+    } else if (user.name == "Paper") {
+      return computer.name == "Rock" ? "Lose" : "Win";
+    }
+  };
+
+  const randomChoice = () => {
+    let itemArray = Object.keys(choice); //객체의 키값만 뽑아서 Array로 만들어 줌
+    let randomItem = Math.floor(Math.random() * itemArray.length);
+    let final = itemArray[randomItem];
+
+    return choice[final];
   };
 
   return (
     <div>
       <div className="main">
-        <Box title="YOU" />
-        <Box title="COMPUTER" />
+        <Box title="YOU" item={userSelect} result={userResult} />
+        <Box title="COMPUTER" item={computerSelect} result={computerResult} />
       </div>
       <div className="main">
         <button onClick={() => play("scissors")}>가위</button>
-        <button onClick={() => play("Rock")}>바위</button>
-        <button onClick={() => play("Paper")}>보</button>
+        <button onClick={() => play("rock")}>바위</button>
+        <button onClick={() => play("paper")}>보</button>
       </div>
     </div>
   );
